@@ -6,7 +6,7 @@
 <ul style="list-style-type:circle">
         <h5>New concepts learnt while making this app :<h5>
         <li>Using the cardview with custom recyclerview adapter and handling its click event.</li>
-        <li>Updating imageview with image path parsed from the JSON string received using Picasso Library.</li>
+        <li>Updating imageview using Picasso Library with the image path parsed from the JSON string received using Volley Library.</li>
         <li>Passing an entire object during the intent call to new activity using GSON Library.</li>
 </ul>
 
