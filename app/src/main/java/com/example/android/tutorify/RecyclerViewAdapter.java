@@ -27,7 +27,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public RecyclerViewAdapter(ArrayList<DataObject> myDataset) {
         this.mDataset = myDataset;
         myObject = this.mDataset;
-        System.out.println("This is myObject : " + myObject.get(0).getFIRST_NAME() + " " + myObject.get(0).getLAST_NAME() + "\n");
+        //System.out.println("This is myObject : " + myObject.get(0).getFIRST_NAME() + " " + myObject.get(0).getLAST_NAME() + "\n");
     }
 
     @Override

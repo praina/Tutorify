@@ -1,8 +1,13 @@
 package com.example.android.tutorify;
 
-import android.app.Dialog;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,11 +16,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -38,31 +38,13 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private EditText editTextId;
-    private Button buttonGet;
-    private TextView textViewResult;
-    private ImageView imageView;
-
     private ProgressDialog loading;
 
-    private ArrayList data = new ArrayList<DataObject>();
+    private ArrayList<DataObject> data = new ArrayList<DataObject>();
 
-    String getClass;
-    String getSubject;
-    String getLocation;
-
-
-    String FIRST_NAME = "";
-    String LAST_NAME = "";
-    String KEY_IMAGE = "";
-    String KEY_LOCATION = "";
-    String CONTACT_ONE = "";
-    String CONTACT_TWO = "";
-    String KEY_EDUCATION = "";
-    String KEY_MEDIUM = "";
-    String KEY_DESCRIPTION = "";
-    String CLASS_FROM = "";
-    String CLASS_UPTO = "";
+    String subjectQuery;
+    String classQuery;
+    String locationQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +60,19 @@ public class MainActivity extends AppCompatActivity {
 //        mAdapter = new RecyclerViewAdapter(getDataSet());
 //        mRecyclerView.setAdapter(mAdapter);
 
-        getData();
+        if (checkInternetConnection()){
+            getData();
+            //The adapter for this condition is set in showJson method
+        }
+        else{
+            mAdapter = new RecyclerViewAdapter(data);
+            mRecyclerView.setAdapter(mAdapter);
+
+            String message = "No Internet Connection!";
+            displayNetworkSnackbar(MainActivity.this,message);
+
+        }
+        //getData();
 
     }
 
@@ -95,31 +89,15 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        if (id == R.id.search_button) {
-            final Dialog dialog = new Dialog(MainActivity.this);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.search_dialog_box);
-            dialog.show();
+        if (checkInternetConnection()) { //Search will be clickable only if the internet is working else not
 
-            final EditText enterClassEditText = (EditText) dialog.findViewById(R.id.enterClassEditText);
-            final EditText enterSubjectEditText = (EditText) dialog.findViewById(R.id.enterSubjectEditText);
-            final EditText enterLocationEditText = (EditText) dialog.findViewById(R.id.enterLocationEditText);
-            Button dialogInputButton = (Button) dialog.findViewById(R.id.submitDialogInputButton);
+            if (id == R.id.search_button) {
 
-            dialogInputButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    getClass = enterClassEditText.getText().toString();
-                    getSubject = enterSubjectEditText.getText().toString();
-                    getLocation = enterLocationEditText.getText().toString();
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
 
-                    dialog.dismiss();
 
-                    Toast.makeText(getApplicationContext(), getClass + " " + getSubject + " " + getLocation, Toast.LENGTH_LONG).show();
-
-                }
-            });
-
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -128,11 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
     //This is where the JSON response is received by making a call to the server
     private void getData() {
-//        String id = editTextId.getText().toString().trim();
-//        if (id.equals("")) {
-//            Toast.makeText(this, "Please enter an id", Toast.LENGTH_LONG).show();
-//            return;
-//        }
+
         loading = ProgressDialog.show(this, "Please wait...", "Fetching...", false, false);
 
         String url = Config.DATA_URL + "1"; //+ id;
@@ -148,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        //Log.e(TAG,error.getMessage().toString());
                         Toast.makeText(MainActivity.this, error.getMessage().toString(), Toast.LENGTH_LONG).show();
                     }
                 });
@@ -160,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
     //This is where the JSON response is Parsed
     private void showJSON(String response) {
 
+        data.clear();
 
         try {
             JSONObject jsonObj = new JSONObject(response);
@@ -180,42 +156,106 @@ public class MainActivity extends AppCompatActivity {
                 dataObject.setCLASS_FROM(jsonObject.getString(Config.CLASS_FROM));
                 dataObject.setCLASS_UPTO(jsonObject.getString(Config.CLASS_UPTO));
 
-//                Toast.makeText(getApplicationContext(), "Name:\t" + dataObject.getCONTACT_ONE() + " " + dataObject.getCONTACT_TWO() +
-//                        "\nLocation:\t" + dataObject.getLOCATION() + "\nEducation:\t" + dataObject.getEDUCATION(), Toast.LENGTH_LONG).show();
-
                 data.add(i,dataObject);
 
-                /*
-                FIRST_NAME = jsonObject.getString(Config.FIRST_NAME);
-                LAST_NAME = jsonObject.getString(Config.LAST_NAME);
-                KEY_IMAGE = jsonObject.getString(Config.KEY_IMAGE);
-                KEY_LOCATION = jsonObject.getString(Config.KEY_LOCATION);
-                CONTACT_ONE = jsonObject.getString(Config.CONTACT_ONE);
-                CONTACT_TWO = jsonObject.getString(Config.CONTACT_TWO);
-                KEY_EDUCATION = jsonObject.getString(Config.KEY_EDUCATION);
-                KEY_MEDIUM = jsonObject.getString(Config.KEY_MEDIUM);
-                KEY_DESCRIPTION = jsonObject.getString(Config.KEY_DESCRIPTION);
-                CLASS_FROM = jsonObject.getString(Config.CLASS_FROM);
-                CLASS_UPTO = jsonObject.getString(Config.CLASS_UPTO);*/
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+        if(data.size()==0){
 
-        //Toast.makeText(getApplicationContext(), "Name:\t" + FIRST_NAME + " " + LAST_NAME + "\nLocation:\t" + KEY_LOCATION + "\nEducation:\t" + KEY_EDUCATION, Toast.LENGTH_LONG).show();
+            String message = "No matching results found!";
+            displaySnackbar(MainActivity.this,message);
 
-        /*textViewResult.setText("Name:\t" + FIRST_NAME + " " + LAST_NAME + "\nLocation:\t" + KEY_LOCATION + "\nEducation:\t" + KEY_EDUCATION);
-        Picasso.with(this).load(Config.IMAGE_URL + KEY_IMAGE).into(imageView);*/
+        }
 
         mAdapter = new RecyclerViewAdapter(data);
         mRecyclerView.setAdapter(mAdapter);
 
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if(intent.getStringExtra("Search").equals("Research"))
+        {
+            subjectQuery = intent.getStringExtra("Subject");
+            classQuery = intent.getStringExtra("Class");
+            locationQuery = intent.getStringExtra("Location");
+            locationQuery = locationQuery.replaceAll(" ", "%20");
+
+            getSearchData();
+        }
+    }
+
+    //This is where the JSON response is received by making a call to the server
+    private void getSearchData() {
+
+        loading = ProgressDialog.show(this, "Please wait...", "Fetching...", false, false);
+
+        String url = Config.GET_SEARCH_RESULTS_URL + "subject=" + subjectQuery + "&class=" + classQuery + "&location=" + locationQuery;
+
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                loading.dismiss();
+                Log.d(TAG, "Response received :"+response);
+                System.out.println(TAG + "response is : " + response);
+                showJSON(response);
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Log.e(TAG,error.getMessage().toString());
+                        Toast.makeText(MainActivity.this, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
     }
 
 
-//    @Override
-//    public void onClick(View v) {
-//        getData();
-//    }
+    //This method displays the Snackbar
+    public void displaySnackbar(Activity activity, String message) {
+        View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+
+        Snackbar.make(rootView, message, Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,SearchActivity.class);
+                startActivity(intent);
+            }
+        }).show();
+    }
+
+    //This method displays the Snackbar
+    public void displayNetworkSnackbar(Activity activity, String message) {
+        View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+
+        Snackbar.make(rootView, message, Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        finish();
+                        Intent intent = new Intent(MainActivity.this,MainActivity.class);
+                        startActivity(intent);
+                    }
+                }).show();
+
+    }
+
+    //This method checks if there is an internet connection or not!
+    private boolean checkInternetConnection() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
 }
