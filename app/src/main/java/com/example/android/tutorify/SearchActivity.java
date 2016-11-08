@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -197,7 +196,11 @@ public class SearchActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(SearchActivity.this, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(SearchActivity.this, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+                        loading.hide();
+                        loading.dismiss();
+                        String message = "Unable to connect to the server!";
+                        displayNetworkSnackbar(SearchActivity.this,message);
                     }
                 });
 

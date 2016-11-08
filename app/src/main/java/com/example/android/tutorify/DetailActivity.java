@@ -18,13 +18,14 @@ public class DetailActivity extends AppCompatActivity {
     ImageView imageView;
 
     TextView nameTV;
-    TextView locationTV;
+    TextView addressTV;
     TextView contactOneTV;
     TextView contactTwoTV;
     TextView educationTV;
     TextView mediumTV;
     TextView classesTV;
     TextView descriptionTV;
+    TextView subjectsTV;
 
     DataObject dataObject;
     DataObject myDataObject;
@@ -33,7 +34,7 @@ public class DetailActivity extends AppCompatActivity {
 
     String firstName;
     String lastName;
-    String location;
+    String address;
     String image;
     String contactOne;
     String contactTwo;
@@ -42,6 +43,7 @@ public class DetailActivity extends AppCompatActivity {
     String classFrom;
     String classUpto;
     String description;
+    String subjects;
 
 
     @Override
@@ -58,13 +60,14 @@ public class DetailActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.displayImageDetail);
 
         nameTV = (TextView) findViewById(R.id.displayNameDetail);
-        locationTV = (TextView) findViewById(R.id.displayLocationDetail);
+        addressTV = (TextView) findViewById(R.id.displayAddressDetail);
         contactOneTV = (TextView) findViewById(R.id.displayContactOneDetail);
         contactTwoTV = (TextView) findViewById(R.id.displayContactTwoDetail);
         educationTV = (TextView) findViewById(R.id.displayEducationDetail);
         mediumTV = (TextView) findViewById(R.id.displayMediumDetail);
         classesTV = (TextView) findViewById(R.id.displayClassesDetail);
         descriptionTV = (TextView) findViewById(R.id.displayDescriptionDetail);
+        subjectsTV = (TextView) findViewById(R.id.displaySubjectsDetail);
 
         dataObject = new DataObject();
         change = new Gson().toJson(dataObject);
@@ -73,7 +76,7 @@ public class DetailActivity extends AppCompatActivity {
 
         firstName = myDataObject.getFIRST_NAME();
         lastName = myDataObject.getLAST_NAME();
-        location = myDataObject.getLOCATION();
+        address = myDataObject.getADDRESS();
         image = myDataObject.getIMAGE();
         contactOne = myDataObject.getCONTACT_ONE();
         contactTwo = myDataObject.getCONTACT_TWO();
@@ -82,12 +85,13 @@ public class DetailActivity extends AppCompatActivity {
         classFrom = myDataObject.getCLASS_FROM();
         classUpto = myDataObject.getCLASS_UPTO();
         description = myDataObject.getDESCRIPTION();
+        subjects = myDataObject.getSUBJECTS();
 
         Picasso.with(this).load(image).into(imageView);
 
         temp = firstName + " " + lastName;
         nameTV.setText(temp);
-        locationTV.setText(location);
+        addressTV.setText(address);
         contactOneTV.setText(contactOne);
         contactTwoTV.setText(contactTwo);
         educationTV.setText(education);
@@ -95,6 +99,7 @@ public class DetailActivity extends AppCompatActivity {
         temp = classFrom + " to " + classUpto;
         classesTV.setText(temp);
         descriptionTV.setText(description);
+        subjectsTV.setText(subjects);
 
     }
 

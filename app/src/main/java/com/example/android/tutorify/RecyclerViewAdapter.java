@@ -38,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class DataObjectHolder extends RecyclerView.ViewHolder{ //implements View.OnClickListener {
         TextView name;
         TextView location;
-        TextView contactOne;
+        TextView subjects;
         TextView classes;
         ImageView image;
 
@@ -47,7 +47,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             name = (TextView) itemView.findViewById(R.id.displayName);
             image = (ImageView) itemView.findViewById(R.id.displayImage);
             location = (TextView) itemView.findViewById(R.id.displayLocation);
-            contactOne = (TextView) itemView.findViewById(R.id.displayContactOne);
+            subjects = (TextView) itemView.findViewById(R.id.displaySubjects);
             classes = (TextView) itemView.findViewById(R.id.displayClass);
 
             Log.i(LOG_TAG, "Adding Listener");
@@ -98,12 +98,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.name.setText(temp1);
         temp1 = "Location : " + mDataset.get(position).getLOCATION();
         holder.location.setText(temp1);
-        temp1 = "Contact : " + mDataset.get(position).getCONTACT_ONE();
-        holder.contactOne.setText(temp1);
         temp1 =mDataset.get(position).getCLASS_FROM();
         temp2 =mDataset.get(position).getCLASS_UPTO();
         temp1 = "Teaching : " + temp1 + " to " + temp2;
         holder.classes.setText(temp1);
+        temp1 = "Subjects : " + mDataset.get(position).getSUBJECTS();
+        holder.subjects.setText(temp1);
         System.out.println("On Bind View Holder : " + temp1);
     }
 

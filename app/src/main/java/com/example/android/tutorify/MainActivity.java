@@ -155,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
                 dataObject.setDESCRIPTION(jsonObject.getString(Config.KEY_DESCRIPTION));
                 dataObject.setCLASS_FROM(jsonObject.getString(Config.CLASS_FROM));
                 dataObject.setCLASS_UPTO(jsonObject.getString(Config.CLASS_UPTO));
+                dataObject.setSUBJECTS(jsonObject.getString(Config.SUBJECTS));
+                dataObject.setADDRESS(jsonObject.getString(Config.ADDRESS));
 
                 data.add(i,dataObject);
 
@@ -211,7 +213,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //Log.e(TAG,error.getMessage().toString());
-                        Toast.makeText(MainActivity.this, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(MainActivity.this, error.getMessage().toString(), Toast.LENGTH_LONG).show();
+                        loading.hide();
+                        loading.dismiss();
+                        String message = "Unable to connect to the server";
+                        displayNetworkSnackbar(MainActivity.this,message);
                     }
                 });
 

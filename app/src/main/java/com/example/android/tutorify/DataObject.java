@@ -16,21 +16,9 @@ public class DataObject {
     private String DESCRIPTION;
     private String CLASS_FROM;
     private String CLASS_UPTO;
+    private String ADDRESS;
+    private String SUBJECTS;
 
-    /*public DataObject(String first_name, String last_name, String image, String location, String contact_one, String contact_two, String education, String medium, String description, String class_from, String class_upto) {
-        FIRST_NAME = first_name;
-        LAST_NAME = last_name;
-        IMAGE = image;
-        LOCATION = location;
-        CONTACT_ONE = contact_one;
-        CONTACT_TWO = contact_two;
-        EDUCATION = education;
-        MEDIUM = medium;
-        DESCRIPTION = description;
-        CLASS_FROM = class_from;
-        CLASS_UPTO = class_upto;
-    }
-    */
 
     public String getFIRST_NAME() {
         return FIRST_NAME;
@@ -118,5 +106,21 @@ public class DataObject {
 
     public void setCLASS_UPTO(String CLASS_UPTO) {
         this.CLASS_UPTO = CLASS_UPTO;
+    }
+
+    public String getADDRESS() {
+        return ADDRESS;
+    }
+
+    public void setADDRESS(String ADDRESS) {
+        this.ADDRESS = ADDRESS;
+    }
+
+    public String getSUBJECTS() {
+        return SUBJECTS;
+    }
+
+    public void setSUBJECTS(String SUBJECTS) {
+        this.SUBJECTS = SUBJECTS;
     }
 }
